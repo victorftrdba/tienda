@@ -24,13 +24,16 @@
                 <td>{{ order.customer_email }}</td>
                 <td>{{ order.customer_mobile }}</td>
                 <td>{{ order.product?.name }}</td>
-                <td>{{formatStatus(order.status)}}</td>
+                <td>{{ formatStatus(order.status) }}</td>
                 <td>
                     <button class="btn btn-secondary rounded-0 fw-bold" @click="openModal(order)">Ver pedido</button>
                 </td>
             </tr>
             </tbody>
         </table>
+        <div v-else class="text-center">
+            Cargando...
+        </div>
         <request-modal :logged="$store.state.token != ''" :order-selected="orderSelected" :show-modal="modal"
                        @closeModal="modal = false"></request-modal>
     </div>
