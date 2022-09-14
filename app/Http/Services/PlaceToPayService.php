@@ -31,12 +31,12 @@ class PlaceToPayService
 
         $order = Order::create([
             ...$data,
-            'request_id' => $session->json()['requestId'],
+            'request_id' => data_get($session->json(), 'requestId', 0),
             'user_id' => $user->id,
             'status' => Order::CREATED,
         ])->toArray();
 
-        $order['url'] = $session->json()['processUrl'];
+        $order['url'] = data_get($session->json(), 'processUrl', []);
 
         return $order;
     }

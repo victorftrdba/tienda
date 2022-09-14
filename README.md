@@ -14,3 +14,4 @@
 #### and run **php artisan migrate --seed**
 #### Don't forget to generate the key with **php artisan key:generate**. <br>
 #### After that you need to run two commands in different terminals, the first one is **npm run dev** and the other **php artisan serve**. <br>
+### If you want to run the  unit tests, run this command: **php artisan test**
