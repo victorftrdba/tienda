@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderRequest;
 use App\Http\Services\PlaceToPayService;
-use App\Models\User;
+use Illuminate\Http\JsonResponse;
 
 class OrderController extends Controller
 {
@@ -15,9 +15,9 @@ class OrderController extends Controller
         $this->service = $service;
     }
 
-    public function store(OrderRequest $request): \Illuminate\Http\JsonResponse
+    public function store(OrderRequest $request): JsonResponse
     {
-        $response = $this->service->payment($request->validated(), $request->user());
+        $response = $this->service->createSession($request->validated(), $request->user());
 
         return response()->json($response, 201);
     }

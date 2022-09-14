@@ -2,17 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\PlaceToPayService;
 use App\Models\User;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    public PlaceToPayService $service;
+
+    public function __construct(PlaceToPayService $service)
+    {
+        $this->service = $service;
+    }
+
     /**
      * @throws AuthenticationException
      */
-    public function auth(Request $request): \Illuminate\Http\JsonResponse
+    public function auth(Request $request): JsonResponse
     {
         $user = User::where('email', $request->input('email'))->first();
 
@@ -25,7 +34,7 @@ class UserController extends Controller
         ]);
     }
 
-    public function store(Request $request): \Illuminate\Http\JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $user = User::create([
             'name' => $request->input('name'),
@@ -36,9 +45,12 @@ class UserController extends Controller
         return response()->json($user, 201);
     }
 
-    public function orders(Request $request): \Illuminate\Http\JsonResponse
+    public function orders(Request $request): JsonResponse
     {
-        $response = $request->user()->orders()->with('product')->orderBy('created_at', 'DESC')->get();
+        $response = $request->user()->orders()->with('product')->orderBy('created_at', 'DESC')->get()->map(function ($value) {
+            $value['url'] = $this->service->getSessionUrl($value->request_id);
+            return $value;
+        });
 
         return response()->json($response);
     }

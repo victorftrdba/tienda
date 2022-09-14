@@ -14,6 +14,7 @@
                 <th scope="col">Customer Mobile</th>
                 <th scope="col">Product</th>
                 <th scope="col">Status</th>
+                <th scope="col">Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -24,22 +25,36 @@
                 <td>{{ order.customer_mobile }}</td>
                 <td>{{ order.product?.name }}</td>
                 <td>{{formatStatus(order.status)}}</td>
+                <td>
+                    <button class="btn btn-secondary rounded-0 fw-bold" @click="openModal(order)">Ver pedido</button>
+                </td>
             </tr>
             </tbody>
         </table>
+        <request-modal :logged="$store.state.token != ''" :order-selected="orderSelected" :show-modal="modal"
+                       @closeModal="modal = false"></request-modal>
     </div>
 </template>
 
 <script>
 import axios from "axios";
+import RequestModal from "./modals/Request.vue";
+import router from "../router/index";
+import {formatStatus} from "../helpers/helper";
 
 export default {
     name: "Order",
+    components: {
+        RequestModal
+    },
     data: () => ({
         loading: false,
-        orders: []
+        orders: [],
+        orderSelected: {},
+        modal: false
     }),
-    mounted () {
+    mounted() {
+        if (this.$store.state.token === '') router.push('/')
         this.loading = true
         const token = localStorage.getItem('jwt')
         axios.get('http://localhost:8000/api/my-orders', {
@@ -53,15 +68,10 @@ export default {
         })
     },
     methods: {
-        formatStatus (value) {
-            switch (value) {
-                case 'APPROVED':
-                    return 'APROVADO'
-                case 'REJECTED':
-                    return 'REJEITADO'
-                case 'CREATED':
-                    return 'CRIADO'
-            }
+        formatStatus,
+        openModal(orderSelected) {
+            this.modal = true
+            this.orderSelected = orderSelected
         }
     }
 }

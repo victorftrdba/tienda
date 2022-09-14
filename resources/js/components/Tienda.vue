@@ -17,7 +17,8 @@
                 </div>
             </div>
         </div>
-        <order-modal :show-modal="modal" :product-selected="productSelected" @closeModal="modal = false"></order-modal>
+        <order-modal :logged="$store.state.token != ''" :product-selected="productSelected" :show-modal="modal"
+                     @closeModal="modal = false"></order-modal>
     </div>
 </template>
 
